@@ -104,6 +104,7 @@ class Soup:
         soup = BeautifulSoup(html_content, "html.parser")
         print("2. Estudios")
         # Print topmenu items
+        # Home button has no text to specify so nothing appears.
         for item in soup.find_all("div", {"class": "menu-key"}):
             nav_menu = item.text
             nav_menu = nav_menu.replace("\t", "").replace("\r", "").replace("\n", "")
@@ -277,17 +278,19 @@ class Soup:
     #         pass
 
 run = Soup()
-#if argument == 1:
-#    run.part1()
-#elif argument == 2:
-#    run.part2()
-#elif argument == 3:
-#    run.part3()
-#elif argument == 4:
-#    run.part4()
-#else:
-#    run.part1()
-#    run.part2()
-#    run.part3()
-#    run.part4()
-run.part4()
+if len(sys.argv) > 1:
+    if sys.argv[1] == "1":
+        run.part1()
+    elif sys.argv[1] == "2":
+        run.part2()
+    elif sys.argv[1] == "3":
+        run.part3()
+    elif sys.argv[1] == "4":
+        run.part4()
+    else:
+        print("Error in command line, please specify which part to run with 1-4 or leave blank to run all parts")
+else:
+    run.part1()
+    run.part2()
+    run.part3()
+    run.part4()
