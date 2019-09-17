@@ -1,10 +1,8 @@
 #!/usr/bin/env python3
 from bs4 import BeautifulSoup
-import requests, sys, csv, json
+import requests, sys, csv, json, re, os, urllib.request
+# import rhinoscriptsyntax as rs
 # from os.path import isfile as file_exist
-import re
-import os
-import urllib.request
 
 # url variables
 url1 = "http://ufm.edu/Portal"
@@ -16,10 +14,6 @@ url4 = "http://ufm.edu/Directorio"
 # print(soup.prettify())
 
 print("<Ian Jenatz>")
-
-#if output > 30 lines:
-#    print("Output exceeds 30 lines, sending output to <logfile>")
-#    saber
 
 class Soup:
 #-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -43,8 +37,8 @@ class Soup:
         print("GET the Complete Address of UFM:", address)
         print("------------------------------------------------------------------")
         # Print the phone number and info email
-        for data in soup.find_all("div", {"class": "container"}):
-            phone = "missing phone"
+        for data in soup.find_all("a", {"href": "tel:+50223387700"}):
+            phone = data.text
         for data in soup.find_all("a", {"href": "mailto:inf@ufm.edu"}):
             info_email = data.string
         print("GET the phone number and info email:", phone, info_email)
@@ -57,8 +51,16 @@ class Soup:
         print("------------------------------------------------------------------")
         # Print all hrefs
         print("Find all properties that have href (link to somewhere):")
-        for link in soup.find_all(href = True):
-            print("\n-", link)
+        if len(soup.find_all(href = True)) < 31:
+            for link in soup.find_all(href = True):
+                print("\n-", link)
+        else:
+            logfile = "../p3soup/logs/find_all_properties_that_have_href.txt"
+            f = open(logfile, "w+")
+            for link in soup.find_all(href = True):
+                f.write("-" + str(link)+ "\n")
+            f.close()
+            print("Output exceeds 30 lines, sending output to:", logfile)
         print("------------------------------------------------------------------")
         # Print UFMail button href
         for link in soup.find_all("a", {"id": "ufmail_"}):
@@ -72,8 +74,16 @@ class Soup:
         print("------------------------------------------------------------------")
         print("get hrefs of all <img>:")
         # Print all <img> hrefs
-        for link in soup.find_all("img"):
-            print("\n-", link.get("src"))
+        if len(soup.find_all("img")) < 31:
+            for link in soup.find_all("img"):
+                print("\n-", link.get("src"))
+        else:
+            logfile = "../p3soup/logs/get_hrefs_of_all_img.txt"
+            f = open(logfile, "w+")
+            for link in soup.find_all("img"):
+                f.write("-" + str(link.get("src"))+ "\n")
+            f.close()
+            print("Output exceeds 30 lines, sending output to:", logfile)
         print("------------------------------------------------------------------")
         # Count all <a>
         count = 0
@@ -137,8 +147,17 @@ class Soup:
         print("GET the title and print it:", title)
         print("------------------------------------------------------------------")
         # Print all hrefs
-        for link in soup.find_all("a"):
-            print("\n-", link.get("href"))
+        print("GET and display the href:")
+        if len(soup.find_all(href = True)) < 31:
+            for link in soup.find_all(href = True):
+                print("\n-", link.get("href"))
+        else:
+            logfile = "../p3soup/logs/get_and_display_the_href.txt"
+            f = open(logfile, "w+")
+            for link in soup.find_all(href = True):
+                f.write("-" + str(link.get("href"))+ "\n")
+            f.close()
+            print("Output exceeds 30 lines, sending output to:", logfile)
         print("------------------------------------------------------------------")
         # Download the logo
         print("Download the \"FACULTAD de CIENCIAS ECONOMICAS\" logo.")
@@ -190,25 +209,56 @@ class Soup:
             for word in re.findall(r"[\w\.-]+@[\w\.-]+", table.text):
                 if word[0] in ["a","e","i","o","u","A","E","I","O","U"]:
                     count += 1
-        print("Sort emails alphabetically:", match)
+        logfile = "../p3soup/logs/4directorio_emails.txt"
+        f = open(logfile, "w+")
+        f.write(str(match))
+        f.close()
+        print("Sort emails alphabetically, sending output to", logfile)
         print("------------------------------------------------------------------")
         print("count all emails that start with a vowel:", count)
         print("------------------------------------------------------------------")
-        # tables = soup.findChildren("table")
-        # my_table = tables[1]
-        # rows = my_table.findChildren(["th", "tr"])
-        # for row in rows:
-        #     cells = row.findChildren("td")
-        #     for cell in cells:
-        #         value = cell.text
-        #         print("The value in this cell is %s" % value)
-        count = 0
-        for table in soup.find_all("table", {"class": ["tabla ancho100", "tabla ancho100 col3"]}):
-            table_rows = table.find_all("tr")
-            for tr in table_rows:
-                td = tr.find_all('td')
-                row = [i.text for i in td]
-                print(row)
+        
+        
+        
+        
+        
+        # Group in a JSON rows that have same address and dump into logs
+        # for table in soup.find_all("table", {"class": ["tabla ancho100", "tabla ancho100 col3"]}):
+        #     x = soup.find("Arquitectura")
+        #     y = soup.find("Edificio Académico")
+
+        # address = {
+        #     x: y
+        # }
+
+        # print(x)
+        # print(y)
+
+        # json_string = json.dumps(address)
+        # datastore = json.loads(json_string)
+
+
+        # filename = rs.SaveFileName("../p3soup/logs/4directorio_address.json")
+
+        # if filename:
+        #     with open(filename, "w") as f:
+        #         json.dump(datastore, f)
+
+        # count = 0
+        # for table in soup.find_all("table", {"class": ["tabla ancho100", "tabla ancho100 col3"]}):
+        #     table_rows = table.find_all("tr")
+        #     for tr in table_rows:
+        #         td = tr.find_all('td')
+        #         row = [i.text for i in td]
+        #         print(row)
+        print("------------------------------------------------------------------")
+           
+           
+           
+           
+           
+           
+           
             # group1 = re.search("Edificio Académico", table.text)
             # count += 1
             # print(group1.string)
@@ -218,6 +268,8 @@ class Soup:
         #print(soup.findChildren("table"))
         print("==================================================================")
         return 0
+    
+    # Como dump a un log file, complements de David pero saber que significa
     # def log(self):
     #     run.part3()
     #     with open(filename="log.txt",mode=-"w") as f:
@@ -238,4 +290,4 @@ run = Soup()
 #    run.part2()
 #    run.part3()
 #    run.part4()
-run.part3()
+run.part4()
