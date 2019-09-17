@@ -127,7 +127,7 @@ find all properties that have href (link to somewhere):
 # use '-' if its a list
 ```
 
-- [] It will be possible to pass an argument to your app to specify which section to run, if no argument provided it will default to "run all parts"
+- [x] It will be possible to pass an argument to your app to specify which section to run, if no argument provided it will default to "run all parts"
 
 ```bash
 # default to run all parts
