@@ -1,8 +1,10 @@
 #!/usr/bin/env python3
 from bs4 import BeautifulSoup
 import requests, sys, csv, json
-from os.path import isfile as file_exist
+# from os.path import isfile as file_exist
 import re
+import os
+import urllib.request
 
 # url variables
 url1 = "http://ufm.edu/Portal"
@@ -55,8 +57,8 @@ class Soup:
         print("------------------------------------------------------------------")
         # Print all hrefs
         print("Find all properties that have href (link to somewhere):")
-        for link in soup.find_all("a"):
-            print("\n-", link.get("href"))
+        for link in soup.find_all(href = True):
+            print("\n-", link)
         print("------------------------------------------------------------------")
         # Print UFMail button href
         for link in soup.find_all("a", {"id": "ufmail_"}):
@@ -92,8 +94,6 @@ class Soup:
         soup = BeautifulSoup(html_content, "html.parser")
         print("2. Estudios")
         # Print topmenu items
-        # for item in soup.find_all("div", {"class": "menu-key"}):
-        #     print("\n-", item.get("data-menu"))
         for item in soup.find_all("div", {"class": "menu-key"}):
             nav_menu = item.text
             nav_menu = nav_menu.replace("\t", "").replace("\r", "").replace("\n", "")
@@ -140,6 +140,14 @@ class Soup:
         for link in soup.find_all("a"):
             print("\n-", link.get("href"))
         print("------------------------------------------------------------------")
+        # Download the logo
+        print("Download the \"FACULTAD de CIENCIAS ECONOMICAS\" logo.")
+        # Downlodea la imagen pero por alguna razón hay un problema al abrirlo. (Abre la imagen pero desaparece)
+        for img in soup.find_all("img", {"class": "fl-photo-img wp-image-500 size-full"}):
+            imgUrl = img.get("src")
+            print(imgUrl)
+            urllib.request.urlretrieve(imgUrl, os.path.basename(imgUrl))
+        print("------------------------------------------------------------------")
         # Print "title" "description" metadata
         for link in soup.find_all("meta", {"property": "og:title"}):
             print("\n-", link.get("content"))
@@ -173,15 +181,18 @@ class Soup:
         print("4. Directorio")
         # Count of emails with a vowel
         count = 0         
-        for tr in soup.find_all("table", {"class": "tabla ancho100"}):
-            match = re.findall(r"[\w\.-]+@[\w\.-]+", tr.text)
-            #match.sort()
-            for word in match:
+        for table in soup.find_all("table", {"class": ["tabla ancho100", "tabla ancho100 col3"]}):
+            match = re.findall(r"[\w\.-]+@[\w\.-]+", table.text)
+            match = match + match
+            match.sort()
+        # Count of emails that start with with a vowel
+        for table in soup.find_all("table", {"class": ["tabla ancho100", "tabla ancho100 col3"]}):
+            for word in re.findall(r"[\w\.-]+@[\w\.-]+", table.text):
                 if word[0] in ["a","e","i","o","u","A","E","I","O","U"]:
                     count += 1
         print("Sort emails alphabetically:", match)
         print("------------------------------------------------------------------")
-        print("count all emails:", count)
+        print("count all emails that start with a vowel:", count)
         print("------------------------------------------------------------------")
         # tables = soup.findChildren("table")
         # my_table = tables[1]
@@ -191,16 +202,26 @@ class Soup:
         #     for cell in cells:
         #         value = cell.text
         #         print("The value in this cell is %s" % value)
-        
+        count = 0
+        for table in soup.find_all("table", {"class": ["tabla ancho100", "tabla ancho100 col3"]}):
+            table_rows = table.find_all("tr")
+            for tr in table_rows:
+                td = tr.find_all('td')
+                row = [i.text for i in td]
+                print(row)
+            # group1 = re.search("Edificio Académico", table.text)
+            # count += 1
+            # print(group1.string)
+
+        # soup.find_all(text = re.compile("Edificio Académico"))
         
         #print(soup.findChildren("table"))
         print("==================================================================")
         return 0
-    # def excedes_30_lines(self):
-    #     a = Soup()
-    #     a.part3()
+    # def log(self):
+    #     run.part3()
     #     with open(filename="log.txt",mode=-"w") as f:
-    #         f.write() #ccomo parametro mandale todo 
+    #         f.write() #como parametro mandale todo 
     #         pass
 
 run = Soup()
@@ -217,4 +238,4 @@ run = Soup()
 #    run.part2()
 #    run.part3()
 #    run.part4()
-run.part4()
+run.part3()
