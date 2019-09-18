@@ -218,58 +218,96 @@ class Soup:
         print("------------------------------------------------------------------")
         print("count all emails that start with a vowel:", count)
         print("------------------------------------------------------------------")
-        
-        
-        
-        
-        
         # Group in a JSON rows that have same address and dump into logs
-        # for table in soup.find_all("table", {"class": ["tabla ancho100", "tabla ancho100 col3"]}):
+        # Had to replace á, é, í, ó, ú because json wasn't accepting the values and would place the hexcode. 
+        print("Grouped all rows with Same Address, dumping to logs/4directorio_address.json")
+        # Parse both tables.
+        table1 = soup.find("table", {"class": "tabla ancho100"})
+        table2 = soup.find_all("table", {"class": "tabla ancho100"})[1]
+        # Create empty lists 
+        location = []
+        page = []
+        # Checks data in table1
+        for row in table1.find_all("tr"):
+            cells = row.find_all("td")
+            if len(cells) == 5: # Not really necessary
+                var2 = cells[4].find(text = True).replace("\n", "").replace(",", "")
+                var1 = cells[0].text
+                var2 = " ".join(var2.split())
+                var1 = " ".join(var1.split())
+                # Replaces tildes to delete hex codes later on.
+                var2 = var2.replace("á", "a").replace("é", "e").replace("í", "i").replace("ó", "o").replace("ú", "u")
+                var1 = var1.replace("á", "a").replace("é", "e").replace("í", "i").replace("ó", "o").replace("ú", "u")
+                # Adds results to lists
+                location.append(var2)
+                page.append(var1)
+        # Checks data in table1
+        for row in table2.find_all("tr"):
+            cells = row.find_all("td")
+            if len(cells) == 5: # Not really necessary
+                var4 = cells[4].find(text = True).replace("\n", "").replace(",", "")
+                var3 = cells[0].text
+                var4 = " ".join(var4.split())
+                var3 = " ".join(var3.split())
+                # Replaces tildes to delete hex codes later on.
+                var4 = var4.replace("á", "a").replace("é", "e").replace("í", "i").replace("ó", "o").replace("ú", "u")
+                var3 = var3.replace("á", "a").replace("é", "e").replace("í", "i").replace("ó", "o").replace("ú", "u")
+                # Adds results to lists
+                location.append(var4)
+                page.append(var3)
+        dictionary = dict(zip(page, location))
+        # Reverses the list (not necessary but I had an error doing it reversed since the beginning, would delete multiple values)
+        ordered = {}
+        for key, value in dictionary.items():
+            if value not in ordered:
+                ordered[value] = [key]
+            else:
+                ordered[value].append(key)
+
+        # Creates json and dumps result.
+        json_string = json.dumps(ordered)
+        datastore = json.loads(json_string)
+        filename = "../p3soup/logs/4directorio_address.json"
+        if filename:
+            with open(filename, "w+") as f:
+                json.dump(datastore, f, indent = 4)
+        print("------------------------------------------------------------------")
+        
+           
+           
+           
+           
+           
+           
+        
+        print("==================================================================")
+        return 0
+    
+    # for table in soup.find_all("table", {"class": ["tabla ancho100", "tabla ancho100 col3"]}):
         #     x = soup.find("Arquitectura")
         #     y = soup.find("Edificio Académico")
-
         # address = {
         #     x: y
         # }
-
         # print(x)
         # print(y)
 
-        # json_string = json.dumps(address)
-        # datastore = json.loads(json_string)
-
-
-        # filename = rs.SaveFileName("../p3soup/logs/4directorio_address.json")
-
-        # if filename:
-        #     with open(filename, "w") as f:
-        #         json.dump(datastore, f)
-
-        # count = 0
+    # count = 0
         # for table in soup.find_all("table", {"class": ["tabla ancho100", "tabla ancho100 col3"]}):
         #     table_rows = table.find_all("tr")
         #     for tr in table_rows:
         #         td = tr.find_all('td')
         #         row = [i.text for i in td]
         #         print(row)
-        print("------------------------------------------------------------------")
-           
-           
-           
-           
-           
-           
-           
-            # group1 = re.search("Edificio Académico", table.text)
-            # count += 1
-            # print(group1.string)
+
+    # group1 = re.search("Edificio Académico", table.text)
+        # count += 1
+        # print(group1.string)
 
         # soup.find_all(text = re.compile("Edificio Académico"))
         
         #print(soup.findChildren("table"))
-        print("==================================================================")
-        return 0
-    
+
     # Como dump a un log file, complements de David pero saber que significa
     # def log(self):
     #     run.part3()
@@ -277,6 +315,8 @@ class Soup:
     #         f.write() #como parametro mandale todo 
     #         pass
 
+
+# Checks the command line and runs program according to input.
 run = Soup()
 if len(sys.argv) > 1:
     if sys.argv[1] == "1":
