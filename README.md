@@ -185,7 +185,7 @@ using ["http://ufm.edu/Portal"](http://ufm.edu/Portal)
 
 ### 1.1 Extra points
 
-- [ ]  From all (&lt;a>) Create a csv file (`logs/extra_as.csv`) with the following columns: Text, href
+- [x]  From all (&lt;a>) Create a csv file (`logs/extra_as.csv`) with the following columns: Text, href
 
 
 **example:**
