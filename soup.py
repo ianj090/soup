@@ -104,8 +104,6 @@ class Soup:
             texts = ' '.join(texts.split())
             text.append(texts)
             href.append(hrefs)
-        print(text)
-        print(href)
 
         # Creates csv file and dumps result
         n = 0
