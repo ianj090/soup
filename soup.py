@@ -89,6 +89,35 @@ class Soup:
             i
             count+=1
         print("Count all <a>:", count)
+        print("------------------------------------------------------------------")
+        # Extra point, create a csv file from all a.
+        print("Created a csv file from all <a>, dumping to logs/extra_as.csv")
+        # Creats lists.
+        text = []
+        href = []
+        # Parses page for all a and appends text and hrefs to the list
+        for data in soup.find_all("a"):
+            texts = data.text
+            hrefs = data.get("href")
+            texts = texts.replace("\t", "").replace("\r", "").replace("\n", "")
+            texts = texts.replace("á", "a").replace("é", "e").replace("í", "i").replace("ó", "o").replace("ú", "u")
+            texts = ' '.join(texts.split())
+            text.append(texts)
+            href.append(hrefs)
+        print(text)
+        print(href)
+
+        # Creates csv file and dumps result
+        n = 0
+        filename = "../p3soup/logs/extra_as.csv"
+        with open(filename, mode='w+') as f:          
+            f_writer = csv.writer(f)
+
+            columnTitleRow = ["Text", " href"]
+            f_writer.writerow(columnTitleRow)
+            for i in href:
+                f_writer.writerow([text[n], href[n]])
+                n += 1
         print("==================================================================")
         return 0
 #-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -405,13 +434,13 @@ class Soup:
         # Creates csv file and dumps result
         n = 0
         filename = "../p3soup/logs/4directorio_3column_tables.csv"
-        with open(filename, mode='w+') as employee_file:          
-            employee_writer = csv.writer(employee_file, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
+        with open(filename, mode='w+') as f:          
+            f_writer = csv.writer(f, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
 
             columnTitleRow = ["Entity", " Fullname", " Email"]
-            employee_writer.writerow(columnTitleRow)
+            f_writer.writerow(columnTitleRow)
             for i in entity:
-                employee_writer.writerow([entity[n], fullname[n], emails[n]])
+                f_writer.writerow([entity[n], fullname[n], emails[n]])
                 n += 1
         print("==================================================================")
         return 0
