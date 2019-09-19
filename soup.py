@@ -245,16 +245,16 @@ class Soup:
         for row in table2.find_all("tr"):
             cells = row.find_all("td")
             if len(cells) == 5: # Not really necessary
-                var4 = cells[4].find(text = True).replace("\n", "").replace(",", "")
                 var3 = cells[0].text
-                var4 = " ".join(var4.split())
+                var4 = cells[4].find(text = True).replace("\n", "").replace(",", "")
                 var3 = " ".join(var3.split())
+                var4 = " ".join(var4.split())
                 # Replaces tildes to delete hex codes later on.
-                var4 = var4.replace("á", "a").replace("é", "e").replace("í", "i").replace("ó", "o").replace("ú", "u")
                 var3 = var3.replace("á", "a").replace("é", "e").replace("í", "i").replace("ó", "o").replace("ú", "u")
+                var4 = var4.replace("á", "a").replace("é", "e").replace("í", "i").replace("ó", "o").replace("ú", "u")
                 # Adds results to lists
-                location.append(var4)
                 page.append(var3)
+                location.append(var4)
         dictionary = dict(zip(page, location))
         # Reverses the list (not necessary but I had an error doing it reversed since the beginning, would delete multiple values)
         ordered = {}
@@ -272,49 +272,67 @@ class Soup:
             with open(filename, "w+") as f:
                 json.dump(datastore, f, indent = 4)
         print("------------------------------------------------------------------")
+        print("Correlated Faculty Dean and Directors into JSON, dumping to logs/4directorio_deans.json")
+        # Parse both tables.
+        table3 = soup.find_all("table", {"class": "tabla ancho100 col3"})[1]
+        # Create empty lists 
+        dean = []
+        faculty = []
+        email = []
+        phone = []
+        # Checks data in table3
+        for row in table3.find_all("tr"):
+            cells = row.find_all("td")
+            if len(cells) == 3: # Not really necessary
+                var5 = cells[0].text
+                var6 = cells[1].find(text = True).replace("\n", "")
+                var7 = cells[2].text
+                var5 = " ".join(var5.split())
+                var6 = " ".join(var6.split())
+                var7 = " ".join(var7.split())
+                # Replaces tildes to delete hex codes later on.
+                var5 = var5.replace("á", "a").replace("é", "e").replace("í", "i").replace("ó", "o").replace("ú", "u")
+                var6 = var6.replace("á", "a").replace("é", "e").replace("í", "i").replace("ó", "o").replace("ú", "u").replace(", decano", "")
+                var7 = var7.replace("á", "a").replace("é", "e").replace("í", "i").replace("ó", "o").replace("ú", "u")
+                var6 = "Dean/Director: " + var6
+                var7 = "E-mail: " + var7
+                if "Facultad" in var5:
+                    faculty.append(var5)
+                    dean.append(var6)
+                    email.append(var7)
+
+        # Compares the faculty with rows in first table, if they are found, gets the phone number for that row.
+        faculty_var = str(faculty).replace("Facultad de", "").replace("[", "").replace("\'", "").replace("]", "")
+        faculty_var = ' '.join(faculty_var.split())
+        faculty_var = list(faculty_var.split(", "))
+        table1 = soup.find("table", {"class": "tabla ancho100"})
+        for i in faculty_var:
+            for row in table1.find_all("tr"):
+                cells = row.find_all("td")
+                if len(cells) == 5: # Not really necessary
+                    var9 = cells[2].text
+                    var8 = cells[0].text
+                    var9 = " ".join(var9.split())
+                    var8 = " ".join(var8.split())
+                    # Replaces tildes to delete hex codes later on.
+                    var9 = var9.replace("á", "a").replace("é", "e").replace("í", "i").replace("ó", "o").replace("ú", "u")
+                    var8 = var8.replace("á", "a").replace("é", "e").replace("í", "i").replace("ó", "o").replace("ú", "u")
+                    # Adds results to lists
+                    if i.replace("\n", "") == var8:
+                        var9 = "Phone Number: " + var9
+                        phone.append(var9)
+        dictionary2 = dict((z[0], list(z[1:])) for z in zip(faculty, dean, email, phone))
         
-           
-           
-           
-           
-           
-           
+        # Creates json and dumps result.
+        json_string = json.dumps(dictionary2)
+        datastore = json.loads(json_string)
+        filename = "../p3soup/logs/4directorio_deans.json"
+        if filename:
+            with open(filename, "w+") as f:
+                json.dump(datastore, f, indent = 4)   
         
         print("==================================================================")
         return 0
-    
-    # for table in soup.find_all("table", {"class": ["tabla ancho100", "tabla ancho100 col3"]}):
-        #     x = soup.find("Arquitectura")
-        #     y = soup.find("Edificio Académico")
-        # address = {
-        #     x: y
-        # }
-        # print(x)
-        # print(y)
-
-    # count = 0
-        # for table in soup.find_all("table", {"class": ["tabla ancho100", "tabla ancho100 col3"]}):
-        #     table_rows = table.find_all("tr")
-        #     for tr in table_rows:
-        #         td = tr.find_all('td')
-        #         row = [i.text for i in td]
-        #         print(row)
-
-    # group1 = re.search("Edificio Académico", table.text)
-        # count += 1
-        # print(group1.string)
-
-        # soup.find_all(text = re.compile("Edificio Académico"))
-        
-        #print(soup.findChildren("table"))
-
-    # Como dump a un log file, complements de David pero saber que significa
-    # def log(self):
-    #     run.part3()
-    #     with open(filename="log.txt",mode=-"w") as f:
-    #         f.write() #como parametro mandale todo 
-    #         pass
-
 
 # Checks the command line and runs program according to input.
 run = Soup()
@@ -328,7 +346,7 @@ if len(sys.argv) > 1:
     elif sys.argv[1] == "4":
         run.part4()
     else:
-        print("Error in command line, please specify which part to run with 1-4 or leave blank to run all parts")
+        print("Error in command line, please specify which part to run with 1 to 4 or leave blank to run all parts")
 else:
     run.part1()
     run.part2()
