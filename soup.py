@@ -1,8 +1,6 @@
 #!/usr/bin/env python3
 from bs4 import BeautifulSoup
 import requests, sys, csv, json, re, os, urllib.request
-# import rhinoscriptsyntax as rs
-# from os.path import isfile as file_exist
 
 # url variables
 url1 = "http://ufm.edu/Portal"
@@ -72,11 +70,11 @@ class Soup:
             MiU = link.get("href")
         print("GET href of \"MiU\" button:", MiU)
         print("------------------------------------------------------------------")
-        print("get hrefs of all <img>:")
+        print("Get hrefs of all <img>:")
         # Print all <img> hrefs
         if len(soup.find_all("img")) < 31:
             for link in soup.find_all("img"):
-                print("\n-", link.get("src"))
+                print("-", link.get("src"))
         else:
             logfile = "../p3soup/logs/get_hrefs_of_all_img.txt"
             f = open(logfile, "w+")
@@ -90,7 +88,7 @@ class Soup:
         for i in soup.find_all("a"):
             i
             count+=1
-        print("count all <a>:", count)
+        print("Count all <a>:", count)
         print("==================================================================")
         return 0
 #-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -105,6 +103,7 @@ class Soup:
         print("2. Estudios")
         # Print topmenu items
         # Home button has no text to specify so nothing appears.
+        print("Display all items from \"topmenu\" (8 in total): ")
         for item in soup.find_all("div", {"class": "menu-key"}):
             nav_menu = item.text
             nav_menu = nav_menu.replace("\t", "").replace("\r", "").replace("\n", "")
@@ -112,25 +111,32 @@ class Soup:
             print("-", nav_menu)
         print("------------------------------------------------------------------")
         # Print all Estudios
+        print("Display ALL \"Estudios\" (Doctorados/Maestrias/Posgrados/Licenciaturas/Baccalaureus): ")
         for item in soup.find_all("div", {"class": "estudios"}):
-            print(item.text)
+            print("-", item.text)
         print("------------------------------------------------------------------")
         # Print all li leftbar items
+        print("Display from \"leftbar\" all <li> items (4 in total): ")
         for item in soup.find_all("div", {"class": "leftbar"}):
             unwanted = item.find("div", {"class": "hidden-phone"})
             unwanted.extract()
-            print(item.text.strip())
+            item = str(item.text.strip())
+            item = item.replace("\n", ",")
+            item = item.split(",")
+            for i in item:
+                print("-", i)
         print("------------------------------------------------------------------")
         # Print all social media with its links
+        print("Get and display all available social media with its links (href) \"class=social pull-right\": ")
         for link in soup.find_all("div", {"class": "social pull-right"}):
             for item in link.find_all("a", {"target": "_blank"}):
-                print("\n-", item.get("href"))
+                print("-", item.get("href"))
         print("------------------------------------------------------------------")
         count = 0
         for i in soup.find_all("a"):
             i
             count+=1
-        print("count all <a>:", count)
+        print("Count all <a>:", count)
         print("==================================================================")
         return 0
 #-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -161,32 +167,31 @@ class Soup:
             print("Output exceeds 30 lines, sending output to:", logfile)
         print("------------------------------------------------------------------")
         # Download the logo
-        print("Download the \"FACULTAD de CIENCIAS ECONOMICAS\" logo.")
         # Downlodea la imagen pero por alguna razón hay un problema al abrirlo. (Abre la imagen pero desaparece)
         for img in soup.find_all("img", {"class": "fl-photo-img wp-image-500 size-full"}):
             imgUrl = img.get("src")
-            print(imgUrl)
             urllib.request.urlretrieve(imgUrl, os.path.basename(imgUrl))
+        print("Downloading the \"FACULTAD de CIENCIAS ECONOMICAS\" logo: ", imgUrl)
         print("------------------------------------------------------------------")
-        # Print "title" "description" metadata
+        print("GET following <meta>: \"title\", \"description\" (\"og\"): ")
         for link in soup.find_all("meta", {"property": "og:title"}):
             print("\n-", link.get("content"))
         for link in soup.find_all("meta", {"property": "og:description"}):
-            print("\n-", link.get("content"))
+            print("-", link.get("content"))
         print("------------------------------------------------------------------")
         # Print the count of all <a>
         count = 0
         for i in soup.find_all("a"):
             i
             count+=1
-        print("count all <a>:", count)
+        print("Count all <a>:", count)
         print("------------------------------------------------------------------")
         # Print the count of all <div>
         count = 0
         for i in soup.find_all("div"):
             i
             count+=1
-        print("count all <div>:", count)
+        print("Count all <div>:", count)
         print("==================================================================")
         return 0
 #-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -216,7 +221,7 @@ class Soup:
         f.close()
         print("Sort emails alphabetically, sending output to", logfile)
         print("------------------------------------------------------------------")
-        print("count all emails that start with a vowel:", count)
+        print("Count all emails that start with a vowel:", count)
         print("------------------------------------------------------------------")
         # Group in a JSON rows that have same address and dump into logs
         # Had to replace á, é, í, ó, ú because json wasn't accepting the values and would place the hexcode. 
@@ -328,9 +333,86 @@ class Soup:
         datastore = json.loads(json_string)
         filename = "../p3soup/logs/4directorio_deans.json"
         if filename:
-            with open(filename, "w+") as f:
+            with open(filename, mode = "w") as f:
                 json.dump(datastore, f, indent = 4)   
-        
+        print("------------------------------------------------------------------")
+        print("Generated CSV file with directories of all 3 column tables, dumping to logs/4directorio_3column_tables.csv")
+        table1 = soup.find_all("table", {"class": "tabla ancho100 col3"})[0]
+        table2 = soup.find_all("table", {"class": "tabla ancho100 col3"})[1]
+        table3 = soup.find_all("table", {"class": "tabla ancho100 col3"})[2]
+        # Create empty lists 
+        entity = []
+        fullname = []
+        emails = []
+        # Checks data in table1
+        for row in table1.find_all("tr"):
+            cells = row.find_all("td")
+            if len(cells) == 3: # Not really necessary
+                var10 = cells[0].text
+                var11 = cells[1].find(text = True).replace("\n", "").replace(",", "")
+                var12 = cells[2].text
+                var10 = " ".join(var10.split())
+                var11 = " ".join(var11.split())
+                var12 = " ".join(var12.split())
+                if var11 is not "":
+                    # Replaces tildes to delete hex codes later on.
+                    var10 = var10.replace("á", "a").replace("é", "e").replace("í", "i").replace("ó", "o").replace("ú", "u")
+                    var11 = var11.replace("á", "a").replace("é", "e").replace("í", "i").replace("ó", "o").replace("ú", "u")
+                    var12 = var12.replace("á", "a").replace("é", "e").replace("í", "i").replace("ó", "o").replace("ú", "u")
+                    # Adds results to lists
+                    entity.append(var10)
+                    fullname.append(var11)
+                    emails.append(var12)
+        # Checks data in table2
+        for row in table2.find_all("tr"):
+            cells = row.find_all("td")
+            if len(cells) == 3: # Not really necessary
+                var10 = cells[0].text
+                var11 = cells[1].find(text = True).replace("\n", "").replace(",", "")
+                var12 = cells[2].text
+                var10 = " ".join(var10.split())
+                var11 = " ".join(var11.split())
+                var12 = " ".join(var12.split())
+                if var11 is not "":
+                    # Replaces tildes to delete hex codes later on.
+                    var10 = var10.replace("á", "a").replace("é", "e").replace("í", "i").replace("ó", "o").replace("ú", "u")
+                    var11 = var11.replace("á", "a").replace("é", "e").replace("í", "i").replace("ó", "o").replace("ú", "u")
+                    var12 = var12.replace("á", "a").replace("é", "e").replace("í", "i").replace("ó", "o").replace("ú", "u")
+                    # Adds results to lists
+                    entity.append(var10)
+                    fullname.append(var11)
+                    emails.append(var12)
+        # Checks data in table3
+        for row in table3.find_all("tr"):
+            cells = row.find_all("td")
+            if len(cells) == 3: # Not really necessary
+                var10 = cells[0].text
+                var11 = cells[1].find(text = True).replace("\n", "").replace(",", "")
+                var12 = cells[2].text
+                var10 = " ".join(var10.split())
+                var11 = " ".join(var11.split())
+                var12 = " ".join(var12.split())
+                if var11 is not "":
+                    # Replaces tildes to delete hex codes later on.
+                    var10 = var10.replace("á", "a").replace("é", "e").replace("í", "i").replace("ó", "o").replace("ú", "u")
+                    var11 = var11.replace("á", "a").replace("é", "e").replace("í", "i").replace("ó", "o").replace("ú", "u")
+                    var12 = var12.replace("á", "a").replace("é", "e").replace("í", "i").replace("ó", "o").replace("ú", "u")
+                    # Adds results to lists
+                    entity.append(var10)
+                    fullname.append(var11)
+                    emails.append(var12)
+
+        # Creates csv file and dumps result
+        n = 0
+        filename = "../p3soup/logs/4directorio_3column_tables.csv"
+        with open(filename, mode='w+') as employee_file:          
+            employee_writer = csv.writer(employee_file, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
+
+            columnTitleRow = ["Entity", " Fullname", " Email"]
+            employee_writer.writerow(columnTitleRow)
+            for i in entity:
+                employee_writer.writerow([entity[n], fullname[n], emails[n]])
+                n += 1
         print("==================================================================")
         return 0
 
