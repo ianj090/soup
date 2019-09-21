@@ -28,7 +28,7 @@ class Soup:
         # Print Title
         title = soup.title.string
         print("GET the title and print it:", title)
-        print("------------------------------------------------------------------")
+        print("------------------------------------------------------------------")      
         # Print the Complete Address of UFM
         for data in soup.find_all("meta", {"property": "og:url"}):
             address = data.get("content")
@@ -131,11 +131,17 @@ class Soup:
         # Print topmenu items
         # Home button has no text to specify so nothing appears.
         print("Display all items from \"topmenu\" (8 in total): ")
-        for item in soup.find_all("div", {"class": "menu-key"}):
+        n = 0
+        for item in soup.find_all("div", {"id": "topmenu"}):
             nav_menu = item.text
-            nav_menu = nav_menu.replace("\t", "").replace("\r", "").replace("\n", "")
+            nav_menu = nav_menu.replace("\t", "").replace("\r", "").replace("\n", ", ")
             nav_menu = " ".join(nav_menu.split())
-            print("-", nav_menu)
+            nav_menu = nav_menu.split(", ")
+            nav_menu = filter(None, nav_menu)
+            for i in nav_menu:
+                if n < 8:
+                    print("-", i)
+                    n += 1           
         print("------------------------------------------------------------------")
         # Print all Estudios
         print("Display ALL \"Estudios\" (Doctorados/Maestrias/Posgrados/Licenciaturas/Baccalaureus): ")
