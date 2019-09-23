@@ -61,7 +61,7 @@ class Soup:
             for link in soup.find_all(href = True):
                 print("\n-", link)
         else:
-            logfile = "../p3soup/logs/find_all_properties_that_have_href.txt"
+            logfile = "logs/find_all_properties_that_have_href.txt"
             f = open(logfile, "w+")
             for link in soup.find_all(href = True):
                 f.write("-" + str(link)+ "\n")
@@ -84,7 +84,7 @@ class Soup:
             for link in soup.find_all("img"):
                 print("-", link.get("src"))
         else:
-            logfile = "../p3soup/logs/get_hrefs_of_all_img.txt"
+            logfile = "logs/get_hrefs_of_all_img.txt"
             f = open(logfile, "w+")
             for link in soup.find_all("img"):
                 f.write("-" + str(link.get("src"))+ "\n")
@@ -108,14 +108,14 @@ class Soup:
             texts = data.text
             hrefs = data.get("href")
             texts = texts.replace("\t", "").replace("\r", "").replace("\n", "")
-            texts = texts.replace("á", "a").replace("é", "e").replace("í", "i").replace("ó", "o").replace("ú", "u")
+            texts = texts.replace("á", "a").replace("é", "e").replace("í", "i").replace("ó", "o").replace("ú", "u").replace("ñ", "n")
             texts = ' '.join(texts.split())
             text.append(texts)
             href.append(hrefs)
 
         # Creates csv file and dumps result
         n = 0
-        filename = "../p3soup/logs/extra_as.csv"
+        filename = "logs/extra_as.csv"
         with open(filename, mode='w+') as f:          
             f_writer = csv.writer(f)
 
@@ -208,7 +208,7 @@ class Soup:
             for link in soup.find_all(href = True):
                 print("\n-", link.get("href"))
         else:
-            logfile = "../p3soup/logs/get_and_display_the_href.txt"
+            logfile = "logs/get_and_display_the_href.txt"
             f = open(logfile, "w+")
             for link in soup.find_all(href = True):
                 f.write("-" + str(link.get("href"))+ "\n")
@@ -219,8 +219,8 @@ class Soup:
         # Downlodea la imagen pero por alguna razón hay un problema al abrirlo. (Abre la imagen pero desaparece)
         for img in soup.find_all("img", {"class": "fl-photo-img wp-image-500 size-full"}):
             imgUrl = img.get("src")
-            urllib.request.urlretrieve(imgUrl, os.path.basename(imgUrl))
-        print("Downloading the \"FACULTAD de CIENCIAS ECONOMICAS\" logo: ", imgUrl)
+            urllib.request.urlretrieve(imgUrl, "images/logo.png")
+        print("Downloading the \"FACULTAD de CIENCIAS ECONOMICAS\" logo: \n", imgUrl)
         print("------------------------------------------------------------------")
         print("GET following <meta>: \"title\", \"description\" (\"og\"): ")
         for link in soup.find_all("meta", {"property": "og:title"}):
@@ -268,7 +268,7 @@ class Soup:
             for word in re.findall(r"[\w\.-]+@[\w\.-]+", table.text):
                 if word[0] in ["a","e","i","o","u","A","E","I","O","U"]:
                     count += 1
-        logfile = "../p3soup/logs/4directorio_emails.txt"
+        logfile = "logs/4directorio_emails.txt"
         f = open(logfile, "w+")
         f.write(str(match))
         f.close()
@@ -294,8 +294,8 @@ class Soup:
                 var2 = " ".join(var2.split())
                 var1 = " ".join(var1.split())
                 # Replaces tildes to delete hex codes later on.
-                var2 = var2.replace("á", "a").replace("é", "e").replace("í", "i").replace("ó", "o").replace("ú", "u")
-                var1 = var1.replace("á", "a").replace("é", "e").replace("í", "i").replace("ó", "o").replace("ú", "u")
+                var2 = var2.replace("á", "a").replace("é", "e").replace("í", "i").replace("ó", "o").replace("ú", "u").replace("ñ", "n")
+                var1 = var1.replace("á", "a").replace("é", "e").replace("í", "i").replace("ó", "o").replace("ú", "u").replace("ñ", "n")
                 # Adds results to lists
                 location.append(var2)
                 page.append(var1)
@@ -308,8 +308,8 @@ class Soup:
                 var3 = " ".join(var3.split())
                 var4 = " ".join(var4.split())
                 # Replaces tildes to delete hex codes later on.
-                var3 = var3.replace("á", "a").replace("é", "e").replace("í", "i").replace("ó", "o").replace("ú", "u")
-                var4 = var4.replace("á", "a").replace("é", "e").replace("í", "i").replace("ó", "o").replace("ú", "u")
+                var3 = var3.replace("á", "a").replace("é", "e").replace("í", "i").replace("ó", "o").replace("ú", "u").replace("ñ", "n")
+                var4 = var4.replace("á", "a").replace("é", "e").replace("í", "i").replace("ó", "o").replace("ú", "u").replace("ñ", "n")
                 # Adds results to lists
                 page.append(var3)
                 location.append(var4)
@@ -325,7 +325,7 @@ class Soup:
         # Creates json and dumps result.
         json_string = json.dumps(ordered)
         datastore = json.loads(json_string)
-        filename = "../p3soup/logs/4directorio_address.json"
+        filename = "logs/4directorio_address.json"
         if filename:
             with open(filename, "w+") as f:
                 json.dump(datastore, f, indent = 4)
@@ -349,9 +349,9 @@ class Soup:
                 var6 = " ".join(var6.split())
                 var7 = " ".join(var7.split())
                 # Replaces tildes to delete hex codes later on.
-                var5 = var5.replace("á", "a").replace("é", "e").replace("í", "i").replace("ó", "o").replace("ú", "u")
-                var6 = var6.replace("á", "a").replace("é", "e").replace("í", "i").replace("ó", "o").replace("ú", "u").replace(", decano", "")
-                var7 = var7.replace("á", "a").replace("é", "e").replace("í", "i").replace("ó", "o").replace("ú", "u")
+                var5 = var5.replace("á", "a").replace("é", "e").replace("í", "i").replace("ó", "o").replace("ú", "u").replace("ñ", "n")
+                var6 = var6.replace("á", "a").replace("é", "e").replace("í", "i").replace("ó", "o").replace("ú", "u").replace("ñ", "n").replace(", decano", "")
+                var7 = var7.replace("á", "a").replace("é", "e").replace("í", "i").replace("ó", "o").replace("ú", "u").replace("ñ", "n")
                 var6 = "Dean/Director: " + var6
                 var7 = "E-mail: " + var7
                 if "Facultad" in var5:
@@ -373,8 +373,8 @@ class Soup:
                     var9 = " ".join(var9.split())
                     var8 = " ".join(var8.split())
                     # Replaces tildes to delete hex codes later on.
-                    var9 = var9.replace("á", "a").replace("é", "e").replace("í", "i").replace("ó", "o").replace("ú", "u")
-                    var8 = var8.replace("á", "a").replace("é", "e").replace("í", "i").replace("ó", "o").replace("ú", "u")
+                    var9 = var9.replace("á", "a").replace("é", "e").replace("í", "i").replace("ó", "o").replace("ú", "u").replace("ñ", "n")
+                    var8 = var8.replace("á", "a").replace("é", "e").replace("í", "i").replace("ó", "o").replace("ú", "u").replace("ñ", "n")
                     # Adds results to lists
                     if i.replace("\n", "") == var8:
                         var9 = "Phone Number: " + var9
@@ -384,7 +384,7 @@ class Soup:
         # Creates json and dumps result.
         json_string = json.dumps(dictionary2)
         datastore = json.loads(json_string)
-        filename = "../p3soup/logs/4directorio_deans.json"
+        filename = "logs/4directorio_deans.json"
         if filename:
             with open(filename, mode = "w") as f:
                 json.dump(datastore, f, indent = 4)   
@@ -409,9 +409,9 @@ class Soup:
                 var12 = " ".join(var12.split())
                 if var11 is not "":
                     # Replaces tildes to delete hex codes later on.
-                    var10 = var10.replace("á", "a").replace("é", "e").replace("í", "i").replace("ó", "o").replace("ú", "u")
-                    var11 = var11.replace("á", "a").replace("é", "e").replace("í", "i").replace("ó", "o").replace("ú", "u")
-                    var12 = var12.replace("á", "a").replace("é", "e").replace("í", "i").replace("ó", "o").replace("ú", "u")
+                    var10 = var10.replace("á", "a").replace("é", "e").replace("í", "i").replace("ó", "o").replace("ú", "u").replace("ñ", "n")
+                    var11 = var11.replace("á", "a").replace("é", "e").replace("í", "i").replace("ó", "o").replace("ú", "u").replace("ñ", "n")
+                    var12 = var12.replace("á", "a").replace("é", "e").replace("í", "i").replace("ó", "o").replace("ú", "u").replace("ñ", "n")
                     # Adds results to lists
                     entity.append(var10)
                     fullname.append(var11)
@@ -428,9 +428,9 @@ class Soup:
                 var12 = " ".join(var12.split())
                 if var11 is not "":
                     # Replaces tildes to delete hex codes later on.
-                    var10 = var10.replace("á", "a").replace("é", "e").replace("í", "i").replace("ó", "o").replace("ú", "u")
-                    var11 = var11.replace("á", "a").replace("é", "e").replace("í", "i").replace("ó", "o").replace("ú", "u")
-                    var12 = var12.replace("á", "a").replace("é", "e").replace("í", "i").replace("ó", "o").replace("ú", "u")
+                    var10 = var10.replace("á", "a").replace("é", "e").replace("í", "i").replace("ó", "o").replace("ú", "u").replace("ñ", "n")
+                    var11 = var11.replace("á", "a").replace("é", "e").replace("í", "i").replace("ó", "o").replace("ú", "u").replace("ñ", "n")
+                    var12 = var12.replace("á", "a").replace("é", "e").replace("í", "i").replace("ó", "o").replace("ú", "u").replace("ñ", "n")
                     # Adds results to lists
                     entity.append(var10)
                     fullname.append(var11)
@@ -447,9 +447,9 @@ class Soup:
                 var12 = " ".join(var12.split())
                 if var11 is not "":
                     # Replaces tildes to delete hex codes later on.
-                    var10 = var10.replace("á", "a").replace("é", "e").replace("í", "i").replace("ó", "o").replace("ú", "u")
-                    var11 = var11.replace("á", "a").replace("é", "e").replace("í", "i").replace("ó", "o").replace("ú", "u")
-                    var12 = var12.replace("á", "a").replace("é", "e").replace("í", "i").replace("ó", "o").replace("ú", "u")
+                    var10 = var10.replace("á", "a").replace("é", "e").replace("í", "i").replace("ó", "o").replace("ú", "u").replace("ñ", "n")
+                    var11 = var11.replace("á", "a").replace("é", "e").replace("í", "i").replace("ó", "o").replace("ú", "u").replace("ñ", "n")
+                    var12 = var12.replace("á", "a").replace("é", "e").replace("í", "i").replace("ó", "o").replace("ú", "u").replace("ñ", "n")
                     # Adds results to lists
                     entity.append(var10)
                     fullname.append(var11)
@@ -457,7 +457,7 @@ class Soup:
 
         # Creates csv file and dumps result
         n = 0
-        filename = "../p3soup/logs/4directorio_3column_tables.csv"
+        filename = "logs/4directorio_3column_tables.csv"
         with open(filename, mode='w+') as f:          
             f_writer = csv.writer(f, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
 
