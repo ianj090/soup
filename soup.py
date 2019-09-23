@@ -42,10 +42,18 @@ class Soup:
         print("GET the phone number and info email:", phone, info_email)
         print("------------------------------------------------------------------")
         # Print nav menu
-        nav_menu = soup.find(id="menu-table").text
-        nav_menu = nav_menu.replace("\t", "").replace("\r", "").replace("\n", "")
-        nav_menu = " ".join(nav_menu.split())
-        print("GET all item that are part of the upper nav menu (id: menu-table):", nav_menu)
+        print("GET all item that are part of the upper nav menu (id: menu-table):")
+        n = 0
+        for item in soup.find_all(id = "menu-table"):
+            nav_menu = item.text
+            nav_menu = nav_menu.replace("\t", "").replace("\r", "").replace("\n", ", ")
+            nav_menu = " ".join(nav_menu.split())
+            nav_menu = nav_menu.split(", ")
+            nav_menu = filter(None, nav_menu)
+            for i in nav_menu:
+                if n < 7:
+                    print("-", i)
+                    n += 1
         print("------------------------------------------------------------------")
         # Print all hrefs
         print("Find all properties that have href (link to somewhere):")
@@ -87,7 +95,7 @@ class Soup:
         count = 0
         for i in soup.find_all("a"):
             i
-            count+=1
+            count += 1
         print("Count all <a>:", count)
         print("------------------------------------------------------------------")
         # Extra point, create a csv file from all a.
@@ -116,7 +124,11 @@ class Soup:
             for i in href:
                 f_writer.writerow([text[n], href[n]])
                 n += 1
-        print("==================================================================")
+        
+        if len(sys.argv) > 1:
+            print("==================================================================")
+        else:
+            pass
         return 0
 #-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
     def part2(self):
@@ -133,15 +145,15 @@ class Soup:
         print("Display all items from \"topmenu\" (8 in total): ")
         n = 0
         for item in soup.find_all("div", {"id": "topmenu"}):
-            nav_menu = item.text
-            nav_menu = nav_menu.replace("\t", "").replace("\r", "").replace("\n", ", ")
-            nav_menu = " ".join(nav_menu.split())
-            nav_menu = nav_menu.split(", ")
-            nav_menu = filter(None, nav_menu)
-            for i in nav_menu:
+            top_menu = item.text
+            top_menu = top_menu.replace("\t", "").replace("\r", "").replace("\n", ", ")
+            top_menu = " ".join(top_menu.split())
+            top_menu = top_menu.split(", ")
+            top_menu = filter(None, top_menu)
+            for i in top_menu:
                 if n < 8:
                     print("-", i)
-                    n += 1           
+                    n += 1
         print("------------------------------------------------------------------")
         # Print all Estudios
         print("Display ALL \"Estudios\" (Doctorados/Maestrias/Posgrados/Licenciaturas/Baccalaureus): ")
@@ -170,7 +182,11 @@ class Soup:
             i
             count+=1
         print("Count all <a>:", count)
-        print("==================================================================")
+        
+        if len(sys.argv) > 1:
+            print("==================================================================")
+        else:
+            pass
         return 0
 #-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
     def part3(self):
@@ -216,16 +232,20 @@ class Soup:
         count = 0
         for i in soup.find_all("a"):
             i
-            count+=1
+            count += 1
         print("Count all <a>:", count)
         print("------------------------------------------------------------------")
         # Print the count of all <div>
         count = 0
         for i in soup.find_all("div"):
             i
-            count+=1
+            count += 1
         print("Count all <div>:", count)
-        print("==================================================================")
+        
+        if len(sys.argv) > 1:
+            print("==================================================================")
+        else:
+            pass
         return 0
 #-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
     def part4(self):
