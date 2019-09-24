@@ -309,7 +309,10 @@ In order to start your project:
 
 ## Usage Dockerfile
 ```bash
-Put your Docker build/run/etc commands here
+Put your Docker build/run/etc commands here:
+
+$ docker build -t soup_image .
+$ docker run soup_image
 ```
 
 ---
