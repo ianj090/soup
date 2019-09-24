@@ -386,7 +386,7 @@ class Soup:
         datastore = json.loads(json_string)
         filename = "logs/4directorio_deans.json"
         if filename:
-            with open(filename, mode = "w") as f:
+            with open(filename, mode = "w+") as f:
                 json.dump(datastore, f, indent = 4)   
         print("------------------------------------------------------------------")
         print("Generated CSV file with directories of all 3 column tables, dumping to logs/4directorio_3column_tables.csv")
