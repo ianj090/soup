@@ -5,8 +5,11 @@ __pycache__/
 
 
 #ignore directories
+/.vscode/*
 */.vscode/*
 */images/*
+/images/*
+/logs/*
 */logs/*
 *project_delivery.txt
 
