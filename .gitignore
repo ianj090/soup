@@ -3,6 +3,13 @@ __pycache__/
 *.py[cod]
 *$py.class
 
+
+#ignore directories
+*/.vscode/*
+*/images/*
+*/logs/*
+*project_delivery.txt
+
 # C extensions
 *.so
 
